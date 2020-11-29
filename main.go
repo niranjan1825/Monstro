@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"runtime"
 	"strings"
 	"sync"
 )
@@ -14,22 +13,17 @@ func main() {
 	var wg sync.WaitGroup
 	ch := make(chan string)
 	wg.Add(1)
-	goroutines1 := runtime.NumGoroutine()
-
-	fmt.Println("Go routines1:", goroutines1)
 
 	go getRepeatedWordsForFile2(&wg, ch)
-
-	goroutines2 := runtime.NumGoroutine()
-
-	fmt.Println("Go routines2:", goroutines2)
 
 	file1, err := os.Open("file1.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	defer file1.Close()
-	data := make([]byte, 500)
+
+	data := make([]byte, 1000)
 	count, err := file1.Read(data)
 	if err != nil {
 		log.Fatal(err)
@@ -43,8 +37,6 @@ func main() {
 	wg.Add(1)
 
 	go getCombinedRepeatedWords(&wg, combinedContent)
-	goroutines3 := runtime.NumGoroutine()
-	fmt.Println("Go routines3:", goroutines3)
 
 	fmt.Println("String Content of File1::", file1content)
 	file1count := 0
@@ -55,7 +47,7 @@ func main() {
 			file1count++
 			sumOfDuplicatesFile1 = sumOfDuplicatesFile1 + value
 
-			fmt.Println("File1's word: ", index, "---->", value)
+			fmt.Println("File1's word and repeated times: ", index, "---->", value)
 		}
 	}
 	fmt.Println("No.of Repeated words in File1 is:", file1count)
@@ -72,7 +64,7 @@ func getRepeatedWordsForFile2(wg *sync.WaitGroup, ch chan string) {
 		log.Fatal(err)
 	}
 	defer file2.Close()
-	data := make([]byte, 500)
+	data := make([]byte, 1000)
 	count, err := file2.Read(data)
 	if err != nil {
 		log.Fatal(err)
@@ -88,7 +80,7 @@ func getRepeatedWordsForFile2(wg *sync.WaitGroup, ch chan string) {
 			file2count++
 			sumOfDuplicatesFile2 = sumOfDuplicatesFile2 + value
 
-			fmt.Println("File2's Word: ", index, "---->", value)
+			fmt.Println("File2's Word and repeated times: ", index, "---->", value)
 		}
 	}
 
@@ -106,7 +98,7 @@ func getCombinedRepeatedWords(wg *sync.WaitGroup, combined string) {
 			combinedCount++
 			sumOfDuplicatesCombined = sumOfDuplicatesCombined + value
 
-			fmt.Println("Combined file's Word: ", index, "---->", value)
+			fmt.Println("Combined file's Word and repeated times: ", index, "---->", value)
 		}
 	}
 
